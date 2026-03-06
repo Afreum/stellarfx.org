@@ -1,4 +1,5 @@
 # stellarfx.org
+
 Documentation for developers building apps using the StellarFX Rates API to retrieve fiat currency exchange rates, Stellar token prices including Afreum token prices, and cryptocurrency prices.
 
 
@@ -21,11 +22,13 @@ ipfs.io/ipns/k51qzi5uqu5dlr2rb6s26f4v1eezd96fia8h51e3glyuq2gw2hiwry1am28yvv/afr_
 ipfs.io/ipns/k51qzi5uqu5dlr2rb6s26f4v1eezd96fia8h51e3glyuq2gw2hiwry1am28yvv/afr_token_other.json 
 
 
+
 **Fiat Currencies** ("type":"fiat") – The latest exchange rates of over 150 fiat currencies. 
 
 _**Supported Assets**_ (see currency fields): 
 
 ipfs.io/ipns/k51qzi5uqu5dlr2rb6s26f4v1eezd96fia8h51e3glyuq2gw2hiwry1am28yvv/afr_token_stable.json  
+
 
 
 **Cryptocurrencies** – The lates prices of popular cryptocurrencies. 
@@ -36,11 +39,13 @@ ipfs.io/ipns/k51qzi5uqu5dlr2rb6s26f4v1eezd96fia8h51e3glyuq2gw2hiwry1am28yvv/afr_
 
  
 
+
 **API Access** 
 
 Send a minimum of **100,000 AFR** (Home Domain: afreum.com; Issuer: GBX6YI45VU7WNAAKA3RBFDR3I3UKNFHTJPQ5F6KOOKSGYIAM4TRQN54W) to the Stellar FX API wallet **GAL2FYLOZAVBVGUZPQU3GACIRYCZRF7CVOYUSNY5ZVZEMT53CRHLKOZQ** for 30 days of API access.  
 
 You may send more than 100,000 AFR, in which case your API access will be pro-rated e.g. 150,000 AFR = 45 days of API access; 1,000,000 AFR = 300 days of API access. Do not send less than 100,000 AFR to the API wallet, as access is processed automatically and your funds will be lost. 
+
 
 🔑 **Authentication Flow** 
 
@@ -51,6 +56,7 @@ You may send more than 100,000 AFR, in which case your API access will be pro-ra
 - Use the JWT in the Authorization header when calling /getRates or /account-status. 
 
   
+
 
 **📌 Endpoints** 
  
@@ -65,6 +71,7 @@ https://rates-api-3.stellarfx.org
 
   
 
+
 **1. /claim-access** 
 
 Retrieve a JWT after sending at least 100,000 AFR to the API wallet. The API requires Bump Sequence transaction id from the Calling Address within 5 minutes of calling the endpoint. You usually call this endpoint once and the JWT token can be used throughout the valid 
@@ -76,11 +83,11 @@ _**Example Function:**_
 **Note:** _Include or import StellarSDK to run this code example._ 
  
 
+
 async function getJWT() {  
 
   const { Horizon, Keypair, TransactionBuilder, Operation, Networks, BASE_FEE } = StellarSdk;  
   const SERVER = 'https://rates-api-1.stellarfx.org';  
-
    
   // 0. Hardcoded secret key  
 
@@ -167,6 +174,7 @@ async function getJWT() {
 }  
   
 
+
 // Call the function  
 
 getJWT()  
@@ -246,6 +254,7 @@ const SERVER = 'https://rates-api-1.stellarfx.org';
 }  
   
 
+
 // Call the function  
 
 const publicKey = '[YOUR PUBLIC KEY]'; 
@@ -274,6 +283,7 @@ _**Expected Response:**_
   "total_days_purchased": 30 
 } 
  
+
 
 _**Error Messages:**_ 
  
@@ -327,6 +337,7 @@ getRates(jwtToken)
 }); 
  
 
+
 _**Expected Response:**_ 
 
 { 
@@ -359,6 +370,7 @@ _**Error Messages:**_
 { error: "invalid-or-expired-token" } - JWT token sent in the authorization header is invalid or it has expired. In this case, another payment must be made to the API wallet or if you have already done so, the /claim-access endpoint should be used to retrieve a fresh JWT token 
 
  
+
 
 ⚠️ **Notes **
 
