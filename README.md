@@ -82,9 +82,9 @@ Retrieve a JWT after sending at least 100,000 AFR to the API wallet. The API req
 
  
 
-	_**Example Function:**_ 
+_**Example Function:**_ 
 	
-	**Note:** _Include or import StellarSDK to run this code example._ 
+**Note:** _Include or import StellarSDK to run this code example._ 
 	 
 	
 	
@@ -195,14 +195,15 @@ Retrieve a JWT after sending at least 100,000 AFR to the API wallet. The API req
 	 
  
 
-	_**Expected Response:**_ 
+_**Expected Response:**_ 
 	  
 	
 	{ "token": "[JWT TOKEN]", "expires_in": 2329738971, "whitelisted": true, "valid_until": 4102444800000 }   
 	
 	 
 	
-	_**Error Messages:**_ 
+_**Error Messages:**_ 
+
 	
 	You will either get a response as above or one of the following error messages: 
 	
@@ -233,7 +234,7 @@ Retrieve a JWT after sending at least 100,000 AFR to the API wallet. The API req
 Check the status of the account and monitor how long an account still has API access. 
 
  
-	_**Example Request:**_ 
+_**Example Request:**_ 
 	
 	
 	async function getAccountStatus(publicKey,jwtToken) {  
@@ -274,7 +275,7 @@ Check the status of the account and monitor how long an account still has API ac
 
  
 
-	_**Expected Response:**_ 
+_**Expected Response:**_ 
 	
 	{ 
 	  "callerAddress": "[CALLER ADDRESS]", 
@@ -289,7 +290,7 @@ Check the status of the account and monitor how long an account still has API ac
  
 
 
-	_**Error Messages:**_ 
+_**Error Messages:**_ 
 	 
 	{ error: "invalid-stellar-address" } - callerAddress should be a 56-character Stellar public key 
 	
@@ -306,7 +307,7 @@ Check the status of the account and monitor how long an account still has API ac
 Retrieve the latest exchange rates and prices by passing callingAddress, currency, type, and JWT authorization. For type (stellar|fiat|crypto) currency can be any ISO 3 fiat currency symbol. The default is USD. The type ‘stellar’ also supports a currency of XLM. 
 
  
-	_**Example Request:**_ 
+_**Example Request:**_ 
 	
 	 
 	// getRates Function  
@@ -342,7 +343,7 @@ Retrieve the latest exchange rates and prices by passing callingAddress, currenc
  
 
 
-	_**Expected Response:**_ 
+_**Expected Response:**_ 
 	
 	{ 
 	    "data": "{\"rates\":{\"ADA\":\"2756643\",\"BCH\":\"4652721102\",\"BTC\":\"731835901482\",\"DASH\":\"349775354\",\"ETH\":\"21450737658\",\"LTC\":\"569088059\",\"USDC\":\"9999563\",\"USDT\":\"10001594\",\"WLD\":\"4186211\",\"XLM\":\"1598555\",\"XRP\":\"14414612\"},\"rate_currency\":\"USD\",\"last_update_utc\":\"2026-03-05T10:30:19Z\",\"last_update_unix\":\"1772706619\"}", 
@@ -355,7 +356,7 @@ Retrieve the latest exchange rates and prices by passing callingAddress, currenc
 
  
 
-	_**Error Messages:**_ 
+_**Error Messages:**_ 
 	
 	{ error: "missing-fields" } - Required fields ‘currency’ or ‘type’ are missing 
 	
