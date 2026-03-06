@@ -373,6 +373,105 @@ Retrieve the latest exchange rates and prices by passing callingAddress, currenc
 	
 	{ error: "invalid-or-expired-token" } - JWT token sent in the authorization header is invalid or it has expired. In this case, another payment must be made to the API wallet or if you have already done so, the /claim-access endpoint should be used to retrieve a fresh JWT token 
 
+
+
+
+**Security & Data Integrity** 
+
+The Stellar FX Rates API signs every response using an Ed25519 private key. Clients can verify these signatures to ensure the data has not been tampered with, modified in transit, or spoofed by an attacker. Verification is optional but strongly recommended for any application that relies on the integrity of rate data. 
+
+**Why Responses Are Signed** 
+
+Each /getRates response includes: 
+
+	- The full payload (currency, type, timestamp, data, callerAddress) 
+	- A detached Ed25519 signature over that payload 
+	- A public key published on the Stellar ledger 
+
+This allows any client to independently verify: 
+
+	- Authenticity — the response was produced by the official oracle 
+	- Integrity — the payload was not modified 
+	- Freshness — the timestamp is included in the signed data 
+	- Non‑repudiation — only the API can produce valid signatures 
+
+ 
+
+_**Example Payload Verification **_
+
+Embed or import these scripts if needed: 
+
+	<script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl.min.js"></script> 
+	<script src="https://cdn.jsdelivr.net/npm/tweetnacl-util@0.15.1/nacl-util.min.js"></script> 
+
+ 
+	const SIGNING_ACCOUNT = "GAL2FYLOZAVBVGUZPQU3GACIRYCZRF7CVOYUSNY5ZVZEMT53CRHLKOZQ"; 
+	const SIGNING_KEY_DATA_FIELD = "Afreum_Rates_Signing_Key"; 
+
+	// Fetch Signing Public Key Function
+	
+	async function fetchSigningPublicKey() { 
+    	const res = await fetch(`https://horizon.stellar.org/accounts/${SIGNING_ACCOUNT}`); 
+	    if (!res.ok) throw new Error("Failed to fetch account"); 
+	    const json = await res.json(); 
+	    const encoded = json.data?.[SIGNING_KEY_DATA_FIELD]; 
+	    if (!encoded) throw new Error(`Missing account data field: ${SIGNING_KEY_DATA_FIELD}`); 
+	
+	    // Decode raw Ed25519 public key bytes 
+	    const raw = nacl.util.decodeBase64(atob(encoded)); 
+	
+	    // Validate length 
+	    if (raw.length !== 32) { 
+	      console.error("Decoded key bytes:", raw); 
+	      console.error("Decoded key length:", raw.length); 
+	      throw new Error("Invalid Ed25519 public key length"); 
+	    } 
+	    return raw; 
+	} 
+
+ 
+	// Verify Signed Payload Function
+	
+	function verifySignedRatesResponse(response, publicKey) { 
+	    const { signature, ...payload } = response; 
+	    const msg = JSON.stringify(payload); 
+	    const msgBytes = nacl.util.decodeUTF8(msg); 
+	    const sigBytes = nacl.util.decodeBase64(signature); 
+	    return nacl.sign.detached.verify(msgBytes, sigBytes, publicKey); 
+	} 
+	
+	  
+	// Test the Function
+	async function test() { 
+	
+	    // 1. Fetch the signing public key from Stellar 
+	
+	    const publicKey = await fetchSigningPublicKey(); 
+	    console.log("Fetched signing public key:", publicKey); 
+	
+	  
+	    // 2. Call your rates API 
+	
+		const jwtToken = '[YOUR JWT TOKEN]'; 
+	    const res = await fetch("https://rates-api-1.stellarfx.org/getRates", { 
+	      method: "POST", 
+	      headers: { 
+	        "Content-Type": "application/json", 
+	        "Authorization": `Bearer ${jwtToken}` 
+	      }, 
+	      body: JSON.stringify({ currency: "USD", type: "fiat" }) 
+	    }); 
+	
+	    const json = await res.json(); 
+		console.log(json); 
+
+	
+	    // 3. Verify the signature 
+	    const valid = verifySignedRatesResponse(json, publicKey); 
+	    console.log("Signature valid?", valid); // If this is ‘true’ you know that the rates have not been tampered with 
+	  } 
+	
+	  test(); 
  
 
 
